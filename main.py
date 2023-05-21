@@ -30,6 +30,9 @@ async def show_plant(ctx):
     conn = SQLEngine(host=os.environ["MYSQL_HOST"], user=os.environ["MYSQL_USER"], passwd=os.environ["MYSQL_PASSWORD"], db="DLPlant")
     user_details = conn.get_user(guild_id=guild_id, member_id=member_id)
     plant = None
+
+    await ctx.response.defer()
+
     if not user_details:
         plant = Plant(plant_type="random_basic_plant", random=True, random_choices=2)
         plant.grow(4)
@@ -45,7 +48,20 @@ async def show_plant(ctx):
     embed = discord.Embed(title="Your Plant", color=0x00ff00)
     embed.set_image(url="attachment://plant.png")
 
-    await ctx.response.send_message(embed=embed, file=chart, ephemeral=True)
+    await ctx.followup.send(embed=embed, file=chart, ephemeral=True)
+
+@tree.command(name="grow", description="Grows your plant by one iteration.")
+async def grow_plant(ctx):
+    member_id = ctx.user.id
+    guild_id = ctx.guild.id
+    conn = SQLEngine(host=os.environ["MYSQL_HOST"], user=os.environ["MYSQL_USER"], passwd=os.environ["MYSQL_PASSWORD"], db="DLPlant")
+    user_exists = conn.check_for_user(guild_id=guild_id, member_id=member_id)
+    if not user_exists:
+        await ctx.response.send_message("You do not have a plant. Please create one with /show")
+        return
+    else:
+        conn.set_user_grow(guild_id=guild_id, member_id=member_id)
+        await ctx.response.send_message("Your plant is beginning to grow. Check back in some time.", ephemeral=True)
 
 @tree.command(name="share", description="Shares a random plant with the server.")
 async def share_plant(ctx):
@@ -69,4 +85,4 @@ async def on_ready():
     await tree.sync()
     print("Ready")
 
-client.run(os.environ['TOKEN'])
+client.run(os.environ["DISCORD_TOKEN"])

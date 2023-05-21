@@ -92,7 +92,15 @@ class SQLEngine:
 
         self.exec_sql(sql, (iter, curr_string, guild_id, member_id))
 
-    def set_user_grow(self, guild_id: int, member_id: int, grow: int):
+    def set_user_grow(self, guild_id: int, member_id: int):
         sql = "UPDATE users SET grow = 1 WHERE guild_id = %s AND member_id = %s"
 
-        self.exec_sql(sql, (grow, guild_id, member_id))
+        self.exec_sql(sql, (guild_id, member_id))
+
+    def get_grow_list(self):
+        sql = "SELECT guild_id, member_id FROM users WHERE grow = 1"
+
+        self.exec_sql(sql)
+
+        result = self.cursor.fetchall()
+        return result
