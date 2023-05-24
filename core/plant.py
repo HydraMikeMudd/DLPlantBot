@@ -1,4 +1,4 @@
-from l_system import LSystem
+from core.l_system import LSystem
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 import numpy as np

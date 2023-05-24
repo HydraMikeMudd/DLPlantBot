@@ -104,3 +104,8 @@ class SQLEngine:
 
         result = self.cursor.fetchall()
         return result
+    
+    def delete_user(self, guild_id: int, member_id: int):
+        sql = "DELETE FROM users WHERE guild_id = %s AND member_id = %s"
+
+        self.exec_sql(sql, (guild_id, member_id))

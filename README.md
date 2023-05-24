@@ -1,7 +1,8 @@
 TODO:
 
-1. Add Reset Tree command and error handling
-2. Test new L Systems and find upper limit for iterations (needed to ensure sufficient response times)
-3. Plan progression systems (timed based, more game like, linear/more log like)
-3. Adjust random interation function to allow specified probabilities
-4. Visual adjustments to trees (color, angles, etc)
+1. Add Reset Tree command -- COMPLETED
+2. Add On Error functionality
+3. Test new L Systems and find upper limit for iterations (needed to ensure sufficient response times)
+4. Plan progression systems (timed based, more game like, linear/more log like)
+5. Adjust random interation function to allow specified probabilities
+6. Visual adjustments to trees (color, angles, etc)

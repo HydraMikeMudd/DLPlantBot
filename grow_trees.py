@@ -1,7 +1,10 @@
-from sql_engine import SQLEngine
-from plant import Plant
+from core.sql_engine import SQLEngine
+from core.plant import Plant
 import time
 import os
+import dotenv
+
+dotenv.load_dotenv()
 
 def grow_trees():
     conn = SQLEngine(host=os.environ["MYSQL_HOST"], user=os.environ["MYSQL_USER"], passwd=os.environ["MYSQL_PASSWORD"], db="DLPlant")
