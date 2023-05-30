@@ -14,7 +14,28 @@ client = discord.Client(intents=intents)
 tree = discord.app_commands.CommandTree(client)
 
 
-@tree.command(name="show", description="Shows you your plant. If plant does not exist, creates one.")
+@tree.command(name="share", description="Shares your plant with the server.")
+async def show_plant(ctx):
+    member_id = ctx.user.id
+    guild_id = ctx.guild.id
+    conn = SQLEngine(host=os.environ["MYSQL_HOST"], user=os.environ["MYSQL_USER"], passwd=os.environ["MYSQL_PASSWORD"], db="DLPlant")
+    user_details = conn.get_user(guild_id=guild_id, member_id=member_id)
+
+    if not user_details:
+        await ctx.response.send_message("You do not have a plant. Please create one with /show", ephemeral=True)
+    elif user_details[UserDetails.IMG_PATH] is None or user_details[UserDetails.GROW] == 1:
+        await ctx.response.send_message("Your plant is beginning to grow. Please check back in some time.", ephemeral=True)
+    else:
+        requester_name = ctx.user.name
+        data_stream = load_image_path(user_details[UserDetails.IMG_PATH])
+        data_stream.seek(0)
+        chart = discord.File(data_stream,filename="plant.png")
+        embed = discord.Embed(title=f"{requester_name}'s Plant", color=0x00ff00)
+        embed.set_image(url="attachment://plant.png")
+
+        await ctx.response.send_message(embed=embed, file=chart)
+
+@tree.command(name="show", description="Shows only you your plant. If plant does not exist, creates one.")
 async def show_plant(ctx):
     member_id = ctx.user.id
     guild_id = ctx.guild.id
