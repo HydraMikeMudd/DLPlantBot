@@ -10,7 +10,6 @@ import dotenv
 dotenv.load_dotenv()
 
 intents = discord.Intents(messages=True)
-intents.message_content = True #v2
 client = discord.Client(intents=intents)
 tree = discord.app_commands.CommandTree(client)
 

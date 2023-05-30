@@ -37,7 +37,11 @@ if __name__ == "__main__":
     SLEEP_TIME = 60 # 1 minute
     while True:
         start_time = time.time()
-        grow_trees()
+        try:
+            grow_trees()
+        except Exception as e:
+            with open("error_log.txt", "a") as f:
+                f.write(f"{time.ctime()}: {e}\n")
         end_time = time.time()
         if (SLEEP_TIME - (end_time - start_time) < 0):
             continue
