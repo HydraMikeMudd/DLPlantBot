@@ -1,6 +1,11 @@
 import MySQLdb
+from enum import IntEnum
 
-
+class UserDetails(IntEnum):
+    ITERATION = 0
+    CURR_SENTENCE = 1
+    GROW = 2
+    IMG_PATH = 3
 
 class SQLEngine:
     def __init__(self, host: str, user: str, passwd: str, db: str):
@@ -72,7 +77,7 @@ class SQLEngine:
         return self.check_for_user(guild_id, member_id)
     
     def get_user(self, guild_id: int, member_id: int):
-        sql = "SELECT iteration, curr_sentence, grow FROM users WHERE guild_id = %s AND member_id = %s"
+        sql = "SELECT iteration, curr_sentence, grow, img_path FROM users WHERE guild_id = %s AND member_id = %s"
 
         self.exec_sql(sql, (guild_id, member_id))
 
@@ -87,10 +92,10 @@ class SQLEngine:
         result = self.cursor.fetchone()
         return result
     
-    def update_user(self, guild_id: int, member_id: int, iter: int, curr_string: str):
-        sql = "UPDATE users SET iteration = %s, curr_sentence = %s, grow = 0 WHERE guild_id = %s AND member_id = %s"
+    def update_user(self, guild_id: int, member_id: int, iter: int, curr_string: str, filepath: str):
+        sql = "UPDATE users SET iteration = %s, curr_sentence = %s, grow = 0, img_path = %s WHERE guild_id = %s AND member_id = %s"
 
-        self.exec_sql(sql, (iter, curr_string, guild_id, member_id))
+        self.exec_sql(sql, (iter, curr_string, filepath, guild_id, member_id))
 
     def set_user_grow(self, guild_id: int, member_id: int):
         sql = "UPDATE users SET grow = 1 WHERE guild_id = %s AND member_id = %s"
@@ -99,6 +104,14 @@ class SQLEngine:
 
     def get_grow_list(self):
         sql = "SELECT guild_id, member_id FROM users WHERE grow = 1"
+
+        self.exec_sql(sql)
+
+        result = self.cursor.fetchall()
+        return result
+    
+    def get_empty_path_list(self):
+        sql = "SELECT guild_id, member_id FROM users WHERE img_path IS NULL"
 
         self.exec_sql(sql)
 

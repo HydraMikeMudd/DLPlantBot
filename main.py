@@ -1,6 +1,8 @@
 from core.plant import Plant
 import os
 from core.sql_engine import SQLEngine
+from core.sql_engine import UserDetails
+from core.image_loader import load_image_path
 import discord
 import dotenv
 
@@ -12,33 +14,29 @@ client = discord.Client(intents=intents)
 tree = discord.app_commands.CommandTree(client)
 
 
-
 @tree.command(name="show", description="Shows you your plant. If plant does not exist, creates one.")
 async def show_plant(ctx):
     member_id = ctx.user.id
     guild_id = ctx.guild.id
     conn = SQLEngine(host=os.environ["MYSQL_HOST"], user=os.environ["MYSQL_USER"], passwd=os.environ["MYSQL_PASSWORD"], db="DLPlant")
     user_details = conn.get_user(guild_id=guild_id, member_id=member_id)
-    plant = None
-
-    await ctx.response.defer()
 
     if not user_details:
         plant = Plant(plant_type="random_basic_plant", random=True, random_choices=2)
         plant.grow(4)
-        print(guild_id, member_id)
         conn.create_new_user(guild_id=guild_id, member_id=member_id, iter=4, curr_string=plant.l_system.current)
+        await ctx.response.send_message("Plant has been created and is growing. Please check back in some time.", ephemeral=True)
+    elif user_details[UserDetails.IMG_PATH] is None or user_details[UserDetails.GROW] == 1:
+        await ctx.response.send_message("Your plant is beginning to grow. Please check back in some time.", ephemeral=True)
     else:
-        plant = Plant(plant_type="random_basic_plant", random=True, random_choices=2, new_start=user_details[1])
+        requester_name = ctx.user.name
+        data_stream = load_image_path(user_details[UserDetails.IMG_PATH])
+        data_stream.seek(0)
+        chart = discord.File(data_stream,filename="plant.png")
+        embed = discord.Embed(title=f"{requester_name}'s Plant", color=0x00ff00)
+        embed.set_image(url="attachment://plant.png")
 
-    requester_name = ctx.user.name
-    data_stream = plant.plot_plant()
-    data_stream.seek(0)
-    chart = discord.File(data_stream,filename="plant.png")
-    embed = discord.Embed(title=f"{requester_name}'s Plant", color=0x00ff00)
-    embed.set_image(url="attachment://plant.png")
-
-    await ctx.followup.send(embed=embed, file=chart, ephemeral=True)
+        await ctx.response.send_message(embed=embed, file=chart, ephemeral=True)
 
 @tree.command(name="grow", description="Grows your plant by one iteration.")
 async def grow_plant(ctx):
@@ -49,7 +47,7 @@ async def grow_plant(ctx):
     if not user_details:
         await ctx.response.send_message("You do not have a plant. Please create one with /show", ephemeral=True)
         return
-    elif user_details[0] > 6:
+    elif user_details[0] > 8:
         await ctx.response.send_message("Your plant is fully grown.", ephemeral=True)
     else:
         conn.set_user_grow(guild_id=guild_id, member_id=member_id)
