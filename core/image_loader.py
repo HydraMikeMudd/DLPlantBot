@@ -1,5 +1,6 @@
 import io
 import uuid
+import os
 
 def load_image_path(filepath: str) -> io.BytesIO:
     """Loads an image from a filepath into a BytesIO object.
@@ -31,3 +32,13 @@ def write_image_path(filepath: str, data: io.BytesIO) -> str:
         f.write(data.read())
     
     return filepath
+
+
+def remove_image_path(filepath: str) -> None:
+    """Removes an image from a filepath.
+
+    Args:
+        filepath (str): The filepath to remove the image from.
+    """
+    if filepath is not None and os.path.exists(filepath):
+        os.remove(filepath)

@@ -15,7 +15,7 @@ def grow_trees():
     print(f"Num of missing images to create: {len(create_trees_list)}")
     for user in create_trees_list:
         user_details = conn.get_user(guild_id=user[0], member_id=user[1])
-        plant = Plant(plant_type="random_basic_plant", random=True, random_choices=2, new_start=user_details[1])
+        plant = Plant(plant_type="random_basic_plant", random=True, random_choices=5, new_start=user_details[1])
         data_stream = plant.plot_plant()
         filepath = write_image_path(filepath=user_details[UserDetails.IMG_PATH], data=data_stream)
         conn.update_user(guild_id=user[0], member_id=user[1], iter=user_details[UserDetails.ITERATION] ,curr_string=plant.l_system.current, filepath=filepath)
@@ -24,7 +24,7 @@ def grow_trees():
     print(f"Num of users to grow: {len(user_list)}")
     for user in user_list:
         user_details = conn.get_user(guild_id=user[0], member_id=user[1])
-        plant = Plant(plant_type="random_basic_plant", random=True, random_choices=2, new_start=user_details[1])
+        plant = Plant(plant_type="random_basic_plant", random=True, random_choices=5, new_start=user_details[1])
         plant.grow(1)
         data_stream = plant.plot_plant()
         filepath = write_image_path(filepath=user_details[UserDetails.IMG_PATH], data=data_stream)

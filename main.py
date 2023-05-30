@@ -3,6 +3,7 @@ import os
 from core.sql_engine import SQLEngine
 from core.sql_engine import UserDetails
 from core.image_loader import load_image_path
+from core.image_loader import remove_image_path
 import discord
 import dotenv
 
@@ -43,7 +44,7 @@ async def show_plant(ctx):
     user_details = conn.get_user(guild_id=guild_id, member_id=member_id)
 
     if not user_details:
-        plant = Plant(plant_type="random_basic_plant", random=True, random_choices=2)
+        plant = Plant(plant_type="random_basic_plant", random=True, random_choices=5)
         plant.grow(4)
         conn.create_new_user(guild_id=guild_id, member_id=member_id, iter=4, curr_string=plant.l_system.current)
         await ctx.response.send_message("Plant has been created and is growing. Please check back in some time.", ephemeral=True)
@@ -82,6 +83,8 @@ async def reset_plant(ctx):
     conn = SQLEngine(host=os.environ["MYSQL_HOST"], user=os.environ["MYSQL_USER"], passwd=os.environ["MYSQL_PASSWORD"], db="DLPlant")
     user_exists = conn.check_for_user(guild_id=guild_id, member_id=member_id)
     if user_exists:
+        user_details = conn.get_user(guild_id=guild_id, member_id=member_id)
+        remove_image_path(user_details[UserDetails.IMG_PATH])
         conn.delete_user(guild_id=guild_id, member_id=member_id)
         await ctx.response.send_message("Your plant has been deleted.", ephemeral=True)
         return

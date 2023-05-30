@@ -18,8 +18,12 @@ class Plant:
             "rules": {
                 "X1": "F+[[X]-X]-F[-FX]+X",
                 "X2": "F-[[X]+X]+F[+FX]-X",
+                "X3": "FFX",
+                "X4": "F-XX",
+                "X5": "F+XX",
                 "F": "FF"
-            }           
+            },
+            "probs": [0.4, 0.4, 0.05, 0.075, 0.075]
         }
     }
 
@@ -50,7 +54,7 @@ class Plant:
     def grow(self, iterations: int):
         for _ in range(iterations):
             if self.random:
-                self.l_system.iterate_rand(self.random_choices)
+                self.l_system.iterate_rand(num_choices=self.random_choices, probs=self.PLANT_OPTIONS[self.plant_type]["probs"])
             else:
                 self.l_system.iterate()
     
@@ -77,6 +81,8 @@ class Plant:
                     x_vals = []
                     y_vals = []
                     x, y, angle = stack.pop()
+                    x_vals.append(x)
+                    y_vals.append(y)
                 case "turn_left":
                     angle += self.angle_increment
                 case "turn_right":
