@@ -17,7 +17,9 @@ tree = discord.app_commands.CommandTree(client)
 @tree.command(name="share", description="Shares your plant with the server.")
 async def show_plant(ctx):
     member_id = ctx.user.id
-    guild_id = ctx.guild.id
+    guild_id = 0
+    if ctx.guild:
+        guild_id = ctx.guild.id
     conn = SQLEngine(host=os.environ["MYSQL_HOST"], user=os.environ["MYSQL_USER"], passwd=os.environ["MYSQL_PASSWORD"], db="DLPlant")
     user_details = conn.get_user(guild_id=guild_id, member_id=member_id)
 
@@ -38,7 +40,9 @@ async def show_plant(ctx):
 @tree.command(name="show", description="Shows only you your plant. If plant does not exist, creates one.")
 async def show_plant(ctx):
     member_id = ctx.user.id
-    guild_id = ctx.guild.id
+    guild_id = 0
+    if ctx.guild:
+        guild_id = ctx.guild.id
     conn = SQLEngine(host=os.environ["MYSQL_HOST"], user=os.environ["MYSQL_USER"], passwd=os.environ["MYSQL_PASSWORD"], db="DLPlant")
     user_details = conn.get_user(guild_id=guild_id, member_id=member_id)
 
@@ -62,7 +66,9 @@ async def show_plant(ctx):
 @tree.command(name="grow", description="Grows your plant by one iteration.")
 async def grow_plant(ctx):
     member_id = ctx.user.id
-    guild_id = ctx.guild.id
+    guild_id = 0
+    if ctx.guild:
+        guild_id = ctx.guild.id
     conn = SQLEngine(host=os.environ["MYSQL_HOST"], user=os.environ["MYSQL_USER"], passwd=os.environ["MYSQL_PASSWORD"], db="DLPlant")
     user_details = conn.get_user(guild_id=guild_id, member_id=member_id)
     if not user_details:
@@ -78,7 +84,9 @@ async def grow_plant(ctx):
 @tree.command(name="delete", description="Deletes your existing plant.")
 async def reset_plant(ctx):
     member_id = ctx.user.id
-    guild_id = ctx.guild.id
+    guild_id = 0
+    if ctx.guild:
+        guild_id = ctx.guild.id
     conn = SQLEngine(host=os.environ["MYSQL_HOST"], user=os.environ["MYSQL_USER"], passwd=os.environ["MYSQL_PASSWORD"], db="DLPlant")
     user_exists = conn.check_for_user(guild_id=guild_id, member_id=member_id)
     if user_exists:
