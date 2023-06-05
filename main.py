@@ -74,7 +74,7 @@ async def grow_plant(ctx):
     if not user_details:
         await ctx.response.send_message("You do not have a plant. Please create one with /show", ephemeral=True)
         return
-    elif user_details[0] > 8:
+    elif user_details[0] > 6:
         await ctx.response.send_message("Your plant is fully grown.", ephemeral=True)
     else:
         conn.set_user_grow(guild_id=guild_id, member_id=member_id)
